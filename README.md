@@ -23,11 +23,10 @@ Concourse is now using Xenial stemcells, so upload the appropriate
 prior to running `deploy-concourse.sh`.
 
 Additionally, Concourse 4.0 expects a local user to exist.
-You can use Credhub to generate this user.  See the
-You can generate this by running:
+You can use Credhub to generate this user:
 
 ```
-$ credhub generate -t user -n /bosh-$(bbl env-id)/concourse/local_user
+$ credhub generate -t user -z admin -n /bosh-$(bbl env-id)/concourse/local_user
 ```
 
 _Note:_ See [Connecting to your new Credhub](#connecting-to-your-new-credhub)

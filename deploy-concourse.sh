@@ -11,7 +11,7 @@ if [ -z ${CONCOURSE_HOST} ]; then
   exit 1
 fi
 
-bosh deploy -d concourse $CONCOURSE_BOSH_DEPLOYMENT/cluster/concourse.yml \
+bosh deploy -n -d concourse $CONCOURSE_BOSH_DEPLOYMENT/cluster/concourse.yml \
    -l $CONCOURSE_BOSH_DEPLOYMENT/versions.yml \
    -l versions.yml \
    -v deployment_name=concourse \
@@ -30,7 +30,9 @@ bosh deploy -d concourse $CONCOURSE_BOSH_DEPLOYMENT/cluster/concourse.yml \
    -o $CONCOURSE_BOSH_DEPLOYMENT/cluster/operations/tls.yml \
    -o $CONCOURSE_BOSH_DEPLOYMENT/cluster/operations/tls-vars.yml \
    -o $CONCOURSE_BOSH_DEPLOYMENT/cluster/operations/web-network-extension.yml \
-   -o operations/add-credhub-uaa-to-web.yml \
+   -o $CONCOURSE_BOSH_DEPLOYMENT/cluster/operations/uaa.yml \
+   -o operations/add-credhub-to-web.yml \
+   -o operations/add-credhub-uaa-client.yml \
    -o operations/enable-db-backups.yml \
    -o operations/backup-atc-db.yml \
    -o operations/backup-uaa-db.yml \

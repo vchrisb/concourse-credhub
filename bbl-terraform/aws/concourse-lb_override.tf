@@ -1,3 +1,5 @@
+// Can be removed when the following is merged:
+// https://github.com/cloudfoundry/bosh-bootloader/pull/378
 output "concourse_lb_target_groups" {
   value = [
     "${aws_lb_target_group.concourse_lb_80.name}",

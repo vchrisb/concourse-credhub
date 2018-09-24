@@ -12,4 +12,4 @@
         roles:
         - tag: admin
           name: uaa
-          password: ((uaa-db-password))
+          password: ((uaa_db_password))

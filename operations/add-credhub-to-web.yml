@@ -1,0 +1,87 @@
+# add required variables
+- type: replace
+  path: /variables?/name=credhub-encryption-password?
+  value:
+    name: credhub-encryption-password
+    type: password
+    options:
+      length: 40
+- type: replace
+  path: /variables?/name=credhub-db-password?
+  value:
+    name: credhub-db-password
+    type: password
+
+# add Credhub release
+- type: replace
+  path: /releases/-
+  value:
+    name: credhub
+    version: ((credhub_release_version))
+    sha1: ((credhub_sha))
+    url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=((credhub_release_version))
+
+# update DB instance to include credhub database
+- type: replace
+  path: /instance_groups/name=db/jobs/name=postgres/properties/databases/databases/-
+  value:
+    name: credhub
+- type: replace
+  path: /instance_groups/name=db/jobs/name=postgres/properties/databases/roles/-
+  value:
+    name: credhub
+    password: ((credhub-db-password))
+
+# add credhub job to web instance group
+- type: replace
+  path: /instance_groups/name=web/jobs/-
+  value:
+    name: credhub
+    release: credhub
+    properties:
+      credhub:
+        port: 8844
+        authentication:
+          uaa:
+            url: ((external_url)):8443
+            verification_key: ((uaa_jwt.public_key))
+            ca_certs:
+            - ((atc_tls.ca))
+        authorization:
+          permissions:
+          - path: /concourse/*
+            actors:
+            - uaa-client:concourse_to_credhub
+            operations: # TODO(zb): give Concourse read-only access
+            - read
+            - write
+            - delete
+        data_storage:
+          type: postgres
+          port: 5432
+          username: credhub
+          password: ((credhub-db-password))
+          database: credhub
+          require_tls: false
+        tls: ((atc_tls))
+        log_level: info
+        encryption:
+          keys:
+          - provider_name: int
+            key_properties:
+              encryption_password: ((credhub-encryption-password))
+            active: true
+          providers:
+          - name: int
+            type: internal
+
+# Configure Concourse to use credhub
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/credhub?
+  value:
+    url: ((external_url)):8844
+    tls:
+      ca_cert:
+        certificate: ((atc_tls.ca))
+    client_id: concourse_to_credhub
+    client_secret: ((concourse_to_credhub_secret))

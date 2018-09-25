@@ -8,5 +8,5 @@
         database: atc
         sslmode: disable
         role:
-          name: atc
-          password: ((atc-db-password))
+          name: concourse
+          password: ((postgres_password))

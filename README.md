@@ -38,19 +38,10 @@ By placing the Credhub and UAA servers on the same instances as Concourse's ATC,
 we require the load balancer fronting the ATC to be extended to allow for both
 Credhub (port 8844) and UAA (port 8443) traffic.
 
-If you are using [`bbl`](https://github.com/cloudfoundry/bosh-bootloader) to
-create this load balancer, you can leverage the terraform provided in the
-`bbl-terraform` directory to extend this load balancer to support
-these additional ports.
-
-This is referred to as a [_plan patch_](https://github.com/cloudfoundry/bosh-bootloader/blob/master/plan-patches/README.md).
-
-The general flow is:
+With recent versions of bbl this is done by [default](https://github.com/cloudfoundry/bosh-bootloader/blob/master/terraform/azure/templates/concourse_lb.tf). 
 
 ```
-$ bbl plan --lb-type=concourse
-$ cp bbl-terraform/<IAAS>/*.tf $BBL_STATE_DIRECTORY/terraform/
-$ bbl up
+$ bbl up --lb-type=concourse
 ```
 
 ## Backup/Restore via BBR

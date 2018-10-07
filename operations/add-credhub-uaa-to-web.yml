@@ -197,6 +197,11 @@
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
             - ((atc_tls.ca))
+        authorization:
+          permissions:
+          - path: /*
+            actors: ["uaa-client:concourse_to_credhub"]
+            operations: [read,write,delete,read_acl,write_acl]
         data_storage:
           type: postgres
           port: 5432
@@ -209,7 +214,8 @@
         encryption:
           keys:
           - provider_name: int
-            encryption_password: ((credhub-encryption-password))
+            key_properties:
+              encryption_password: ((credhub-encryption-password))
             active: true
           providers:
           - name: int
